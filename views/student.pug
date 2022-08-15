@@ -1,0 +1,111 @@
+extends layout
+
+block main
+  section#tests
+    header
+      h2 Name: #{student.name}
+      p Test plan: #{student.test_plan}
+      p Baseline: #{studentBaseline}
+
+      ul
+        li
+          form(action=`/students/${student.id}/edit` method="get")
+            button.edit(type="submit") Edit Student
+
+        if student.tests.length > 0
+          if !studentIsDone
+            li
+              form.complete_all(action=`/students/${student.id}/complete_all`
+                                method="post")
+                button.check(type="submit") Complete All
+        
+          if someTestsDone
+            li
+              form.uncheck_all(action=`/students/${student.id}/uncheck_all`
+                                method="post")
+                button.check(type="submit") Mark All Incomplete
+
+          li
+            form(action=`/students/${student.id}/filter` method="post")
+              select(id="filter" name="filter" onchange='this.form.submit()')
+                option(selected disabled) Filter By:
+                option(value="plan") Curent Test Plan
+                each pack in studentPacks
+                  option(value=pack.title) #{pack.title}
+                //- option(value="current") Current Test Pack
+                option(value="completed") Completed
+                option(value="incomplete") Incomplete
+                option(value="all") Show All Test Types
+
+    ul
+      if student.tests.length === 0
+        p No tests. Add a test pack below.
+      block testDisplay
+        each test, testIndex in student.tests
+          li(class=test.done ? "done" : "")
+            p #[strong #{test.title}] (#{test.test_pack})
+            form.check(id=test.score_id ? "confirm" : null, action=`/students/${student.id}/tests/${test.id}/toggle` method="post")
+              button Done
+              if !test.done
+                if test.test_type === "SAT"
+                  input(type="number"
+                      id="SATVerbal"
+                      name="SATVerbal"
+                      placeholder="verbal"
+                      value=SATVerbal)
+                  input(type="number"
+                      id="SATMath"
+                      name="SATMath"
+                      placeholder="math"
+                      value=SATMath)
+                else if test.test_type === "ACT"
+                  input(type="number"
+                      id="ACTEnglish"
+                      name="ACTEnglish"
+                      placeholder="english"
+                      value=ACTEnglish)
+                  input(type="number"
+                      id="ACTMath"
+                      name="ACTMath"
+                      placeholder="math"
+                      value=ACTMath)
+                  input(type="number"
+                      id="ACTReading"
+                      name="ACTReading"
+                      placeholder="reading"
+                      value=ACTReading)
+                  input(type="number"
+                      id="ACTScience"
+                      name="ACTScience"
+                      placeholder="science"
+                      value=ACTScience)
+                input(type="checkbox" id="projected" name="projected" value=1)
+                label(for="projected")  Projected 
+                input(type="checkbox" id="mock" name="mock" value=1)
+                label(for="mock")  Mock
+            if test.done
+              p= testScores[testIndex]
+              form(action=`/students/${student.id}/tests/${test.id}/edit` method="get")
+                button.edit(type="submit") Edit Score
+            br
+            br
+
+    form(action=`/students/${student.id}/add_tests` method="post")
+      label(for="newPack") Add a new test pack
+      select(id="newPack", name="newPack")
+        each pack in nextPacks
+          option(value=pack.id) #{pack.title}
+      button Add Pack
+    br
+
+    if (student.tests.length > 0)
+      form.remove_tests(action=`/students/${student.id}/remove_tests` method="post")
+        label(for="removePack") Remove test pack
+        select(id="removePack", name="removePack")
+          each pack in studentPacks
+            option(value=pack.id) #{pack.title}
+        button Remove Pack
+
+block headerLinks
+  .actions
+    a.student(href="/students") All Students

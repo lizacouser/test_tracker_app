@@ -1,0 +1,96 @@
+extend layout
+
+block main
+  section#tests
+    header
+      h2 Editing '#{student.name}'
+      ul
+        li
+          form.delete(action=`/students/${student.id}/destroy` method="post")
+            button.delete(type="submit") Delete Student
+
+  form(action=`/students/${student.id}/edit` method="post")
+    dl
+      dt
+        h2 Enter new name for student:
+      dd
+        input(type="text"
+              id="studentName"
+              name="studentName"
+              placeholder="Student Name"
+              value=studentName || student.name)
+
+      br
+
+      dt
+        h2 Enter new baseline:
+      dd
+        label(for="SATVerbal") SAT: 
+        input(type="number"
+              id="SATVerbal"
+              name="SATVerbal"
+              placeholder="Verbal"
+              value=SATVerbal || (studentBaseline ? studentBaseline.sat_verbal : null))
+
+        label(for="SATMath") /
+        input(type="number"
+              id="SATMath"
+              name="SATMath"
+              placeholder="Math"
+              value=SATMath || (studentBaseline ? studentBaseline.sat_math : null))
+
+      dd
+        label(for="ACTEnglish") ACT: 
+        input(type="number"
+              id="ACTEnglish"
+              name="ACTEnglish"
+              placeholder="English"
+              value=ACTEnglish || (studentBaseline ? studentBaseline.act_english : null))
+
+        label(for="ACTMath") /
+        input(type="number"
+              id="ACTMath"
+              name="ACTMath"
+              placeholder="Math"
+              value=ACTMath || (studentBaseline ? studentBaseline.act_math : null))
+
+        label(for="ACTReading") /
+        input(type="number"
+              id="ACTReading"
+              name="ACTReading"
+              placeholder="Reading"
+              value=ACTReading || (studentBaseline ? studentBaseline.act_reading : null))
+
+        label(for="ACTScience") /
+        input(type="number"
+              id="ACTScience"
+              name="ACTScience"
+              placeholder="Science"
+              value=ACTScience || (studentBaseline ? studentBaseline.act_science : null))
+
+      br
+      dt
+        h2 Enter new test plan:
+      dd
+        label(for="SAT") SAT 
+        input(type="radio"
+              id="SAT"
+              name="test_plan"
+              value="SAT"
+              checked=student.test_plan === "SAT"
+              required=true)
+
+      dd
+        label(for="ACT") ACT
+        input(type="radio"
+              id="ACT"
+              name="test_plan"
+              value="ACT"
+              checked=student.test_plan === "ACT"
+              required=true)
+      br
+
+
+    fieldset.actions
+      input(type="submit" value="Save")
+      a(href=`/students/${student.id}`) Cancel

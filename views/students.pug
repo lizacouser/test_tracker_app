@@ -1,0 +1,28 @@
+extends layout
+
+block main
+  if students === undefined || students.length === 0
+    p#no_list You don't have any students. Why not create one?
+  else
+    section#students
+      ul
+        each student, studentIndex in students
+          - let studentInfo = studentsInfo[studentIndex];
+          li
+            a(href=`/students/${student.id}`)
+              h2= student.name
+            p #{studentInfo.countStudentTestsComplete} / #{studentInfo.countStudentTests}
+            p Test Plan: #{student.test_plan}
+
+            //- if studentInfo.highestTest
+              //- p Highest: #{studentInfo.highestTestScore}
+
+            p Baseline: #{studentInfo.baselineScore}
+
+            form.delete(action=`/students/${student.id}/destroy` method="post")
+              button Delete
+           
+
+block headerLinks
+  .actions
+    a.add(href="/students/new") New Student

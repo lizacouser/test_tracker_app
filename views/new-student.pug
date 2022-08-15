@@ -1,0 +1,78 @@
+extends layout
+
+block main
+  form(action="/students" method="post")
+    dl
+      dt
+        h2 Enter your student's name:
+      dd
+        input(type="text"
+              id="studentName"
+              name="studentName"
+              placeholder="Student Name"
+              value=studentName)
+
+      br
+
+      dt
+        h2 Enter your student's baseline score:
+      dd
+        label(for="SATVerbal") SAT: 
+        input(type="number"
+              id="SATVerbal"
+              name="SATVerbal"
+              placeholder="Verbal"
+              value=SATVerbal)
+
+        label(for="SATMath") /
+        input(type="number"
+              id="SATMath"
+              name="SATMath"
+              placeholder="Math"
+              value=SATMath)
+
+      dd
+        label(for="ACTEnglish") ACT: 
+        input(type="number"
+              id="ACTEnglish"
+              name="ACTEnglish"
+              placeholder="English"
+              value=ACTEnglish)
+
+        label(for="ACTMath") /
+        input(type="number"
+              id="ACTMath"
+              name="ACTMath"
+              placeholder="Math"
+              value=ACTMath)
+
+        label(for="ACTReading") /
+        input(type="number"
+              id="ACTReading"
+              name="ACTReading"
+              placeholder="Reading"
+              value=ACTReading)
+
+        label(for="ACTScience") /
+        input(type="number"
+              id="ACTScience"
+              name="ACTScience"
+              placeholder="Science"
+              value=ACTScience)
+
+      br
+      dt
+        h2 Enter your student's test plan:
+      dd
+        label(for="SAT") SAT 
+        input(type="radio" id="SAT" name="test_plan" value="SAT" required=true selected)
+
+      dd
+        label(for="ACT") ACT
+        input(type="radio" id="ACT" name="test_plan" value="ACT" required=true)
+      br
+
+
+    fieldset.actions
+      input(type="submit" value="Save")
+      a(href="/students") Cancel

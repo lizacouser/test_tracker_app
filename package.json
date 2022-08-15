@@ -1,0 +1,31 @@
+{
+  "name": "test-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test-tracker.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon test-tracker.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connect-loki": "^1.2.0",
+    "express": "^4.17.3",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.2",
+    "express-validator": "^6.14.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.7.3",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.12.1",
+    "eslint-cli": "^1.1.1",
+    "nodemon": "^2.0.15"
+  }
+}

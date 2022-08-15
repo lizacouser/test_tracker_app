@@ -1,0 +1,50 @@
+extends student
+
+block testDisplay
+  if studentIsDone && student.tests.length > 0
+    p Student has completed all tests in pack.
+  each test, testIndex in student.tests
+    if !test.done
+      li
+        p #[strong #{test.title}] (#{test.test_pack})
+        form.check(id=test.score_id ? "confirm" : null, action=`/students/${student.id}/tests/${test.id}/toggle` method="post")
+          button Done
+          if !test.done
+            if test.test_type === "SAT"
+              input(type="number"
+                  id="SATVerbal"
+                  name="SATVerbal"
+                  placeholder="verbal"
+                  value=SATVerbal)
+              input(type="number"
+                  id="SATMath"
+                  name="SATMath"
+                  placeholder="math"
+                  value=SATMath)
+            else if test.test_type === "ACT"
+              input(type="number"
+                  id="ACTEnglish"
+                  name="ACTEnglish"
+                  placeholder="english"
+                  value=ACTEnglish)
+              input(type="number"
+                  id="ACTMath"
+                  name="ACTMath"
+                  placeholder="math"
+                  value=ACTMath)
+              input(type="number"
+                  id="ACTReading"
+                  name="ACTReading"
+                  placeholder="reading"
+                  value=ACTReading)
+              input(type="number"
+                  id="ACTScience"
+                  name="ACTScience"
+                  placeholder="science"
+                  value=ACTScience)
+            input(type="checkbox" id="projected" name="projected" value=1)
+            label(for="projected")  Projected 
+            input(type="checkbox" id="mock" name="mock" value=1)
+            label(for="mock")  Mock
+        br
+        br

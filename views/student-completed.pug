@@ -1,0 +1,18 @@
+extends student
+
+block testDisplay
+  if !someTestsDone && student.tests.length > 0
+      p Student has not completed any tests.
+  else
+    each test, testIndex in student.tests
+      if test.done
+        li(class="done")
+          p #[strong #{test.title}] (#{test.test_pack})
+          form.check(id=test.score_id ? "confirm" : null, action=`/students/${student.id}/tests/${test.id}/toggle` method="post")
+            button Done
+          if test.done
+            p= testScores[testIndex]
+            form(action=`/students/${student.id}/tests/${test.id}/edit` method="get")
+              button.edit(type="submit") Edit Score
+          br
+          br
