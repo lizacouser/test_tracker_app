@@ -1,0 +1,321 @@
+re: coding my test taking app
+- [ ] automatically add first pack
+- [ ] Add selected property to html form for filtering
+- [ ] Add PSATs
+- [ ] Now does score_id ever matter? it seems to matter as a boolean in:
+  - edit-score, student-all, student-completed, student-current, student-incomplete, student
+  -maybe change to "hasScore" or something
+- [ ] is it worth replacing all the test_id in the parameters with students_tests_ids, and doing look-ups by st id instead of student_id combined with test_id??
+
+Identify baseline by date taken?
+
+Tests should store type not plan
+
+Cumulative calculated and stored in scores spreadsheet?
+
+Group display by test pack?
+
+Add official tests?
+
+Make byrne teach me prettier so I can reformat code
+
+How to make it so that you can save values to score input form
+
+ADD DATE TAKEN?
+
+Add flash messaging for checking “projected” or “mock” without scores?
+
+Change score title to ‘section’
+
+Have to make form so that rather than storing SATVerbal, ACTMath, etc, you just submit 
+
+-> take it back to basics
+-> once you get it using a database, you can start adapting
+-> don’t be stupid trying to fix things that are overcomplicated
+
+
+
+
+How to fix baseline problem:
+-> add baseline data to seed data
+-> comment out everything that talks about baseline
+-> add it back into tests
+
+
+
+sorted student result [
+  {
+    id: 2,
+    name: 'Byrne',
+    test_plan: 'ACT',
+    baselineScore: {
+      mock: false,
+      projected: false,
+      act_english: 30,
+      act_math: 30,
+      act_reading: 30,
+      act_science: 30,
+      sat_verbal: null,
+      sat_math: null,
+      test: 'Baseline ACT',
+      test_type: 'ACT'
+    },
+    tests: []
+  },
+  {
+    id: 1,
+    name: 'Liza',
+    test_plan: 'SAT',
+    baselineScore: {
+      mock: false,
+      projected: false,
+      act_english: null,
+      act_math: null,
+      act_reading: null,
+      act_science: null,
+      sat_verbal: 480,
+      sat_math: 500,
+      test: 'Baseline PSAT/SAT',
+      test_type: 'SAT'
+    },
+    tests: [
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object]
+    ]
+  },
+  {
+    id: 3,
+    name: 'liza ccc',
+    test_plan: 'SAT',
+    baselineScore: {
+      mock: false,
+      projected: false,
+      act_english: null,
+      act_math: null,
+      act_reading: null,
+      act_science: null,
+      sat_verbal: 500,
+      sat_math: 500,
+      test: 'Baseline PSAT/SAT',
+      test_type: 'SAT'
+    },
+    tests: []
+  }
+]
+
+
+load student result {
+  id: 2,
+  name: 'Byrne',
+  test_plan: 'ACT',
+  baseline: {
+    id: 52,
+    test_type: 'ACT',
+    test_plan: 'ACT',
+    students_tests_id: 20,
+    score_id: 20
+  },
+  tests: []
+}
+
+sorted tests result []
+
+
+load student result {
+  id: 1,
+  name: 'Liza',
+  test_plan: 'SAT',
+  baseline: {
+    id: 51,
+    test_type: 'SAT',
+    students_tests_id: 17,
+    score_id: 17
+  },
+  tests: [
+    {
+      title: 'May 2021 Int',
+      done: true,
+      id: 10,
+      test_type: 'SAT',
+      test_pack: 'SAT Pack A',
+      students_tests_id: 10,
+      score_id: null
+    },
+    {
+      title: 'BB9',
+      done: false,
+      id: 2,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 2,
+      score_id: null
+    },
+    {
+      title: 'BB6',
+      done: false,
+      id: 5,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 5,
+      score_id: null
+    },
+    {
+      title: 'BB1',
+      done: false,
+      id: 8,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 8,
+      score_id: null
+    },
+    {
+      title: 'BB5',
+      done: false,
+      id: 6,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 6,
+      score_id: null
+    },
+    {
+      title: 'BB7',
+      done: true,
+      id: 4,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 4,
+      score_id: null
+    },
+    {
+      title: 'BB10',
+      done: false,
+      id: 1,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 1,
+      score_id: null
+    },
+    {
+      title: 'BB8',
+      done: true,
+      id: 3,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 3,
+      score_id: null
+    },
+    {
+      title: 'Oct 2021 US',
+      done: true,
+      id: 9,
+      test_type: 'SAT',
+      test_pack: 'SAT Pack A',
+      students_tests_id: 9,
+      score_id: null
+    },
+    {
+      title: 'BB3',
+      done: false,
+      id: 7,
+      test_type: 'SAT',
+      test_pack: '2020 SAT Blue Book',
+      students_tests_id: 7,
+      score_id: null
+    }
+  ]
+}
+sorted tests result [
+  {
+    title: 'BB10',
+    done: false,
+    id: 1,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 1,
+    score_id: null
+  },
+  {
+    title: 'BB9',
+    done: false,
+    id: 2,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 2,
+    score_id: null
+  },
+  {
+    title: 'BB6',
+    done: false,
+    id: 5,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 5,
+    score_id: null
+  },
+  {
+    title: 'BB5',
+    done: false,
+    id: 6,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 6,
+    score_id: null
+  },
+  {
+    title: 'BB3',
+    done: false,
+    id: 7,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 7,
+    score_id: null
+  },
+  {
+    title: 'BB1',
+    done: false,
+    id: 8,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 8,
+    score_id: null
+  },
+  {
+    title: 'BB8',
+    done: true,
+    id: 3,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 3,
+    score_id: null
+  },
+  {
+    title: 'BB7',
+    done: true,
+    id: 4,
+    test_type: 'SAT',
+    test_pack: '2020 SAT Blue Book',
+    students_tests_id: 4,
+    score_id: null
+  },
+  {
+    title: 'Oct 2021 US',
+    done: true,
+    id: 9,
+    test_type: 'SAT',
+    test_pack: 'SAT Pack A',
+    students_tests_id: 9,
+    score_id: null
+  },
+  {
+    title: 'May 2021 Int',
+    done: true,
+    id: 10,
+    test_type: 'SAT',
+    test_pack: 'SAT Pack A',
+    students_tests_id: 10,
+    score_id: null
+  }
+]

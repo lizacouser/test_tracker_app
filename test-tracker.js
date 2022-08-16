@@ -71,7 +71,7 @@ app.get("/", (_req, res) => {
   res.redirect("/students");
 });
 
-// Render the list of todo lists
+// Render the list of students
 app.get("/students",
   catchError(async (_req, res) => {
     let store = res.locals.store;
@@ -86,7 +86,6 @@ app.get("/students",
         baselineScore: store.scoreString(student.baselineScore),
       };
     });
-    console.log(studentsInfo, students);
 
     res.render("students", {
       students,
@@ -95,10 +94,11 @@ app.get("/students",
   })
 );
 
-// Render new todo list page
+// Render new student page
 app.get("/students/new", (_req, res) => {
   res.render("new-student");
 });
+
 
 // Create a new student
 app.post("/students",
@@ -109,6 +109,23 @@ app.post("/students",
   ],
 
   catchError(async (req, res) => {
+    let satScoreInput = [req.body.SATVerbal, req.body.SATMath];
+    let actScoreInput = [req.body.ACTEnglish, req.body.ACTMath, req.body.ACTReading, req.body.ACTScience];
+
+    const incompleteBaseline = () => {
+      let isPartialSat = satScoreInput.some(sectionScore => !!sectionScore) &&
+                        !satScoreInput.every(sectionScore => !!sectionScore);
+      let isPartialAct = actScoreInput.some(sectionScore => !!sectionScore) &&
+                        !actScoreInput.every(sectionScore => !!sectionScore);
+      return (isPartialSat || isPartialAct);
+    };
+
+    const multipleBaselines = () => {
+      let someSat = satScoreInput.some(sectionScore => !!sectionScore);
+      let someAct = actScoreInput.some(sectionScore => !!sectionScore);
+      return someSat && someAct;
+    };
+
     const rerenderNewStudent = () => {
       res.render("new-student", {
         flash: req.flash(),
@@ -128,16 +145,21 @@ app.post("/students",
       if (!errors.isEmpty()) {
         errors.array().forEach(message => req.flash("error", message.msg));
         rerenderNewStudent();
+      } else if (incompleteBaseline()) {
+        req.flash("error", "You must complete all sections to submit a baseline score.");
+        rerenderNewStudent();
+      } else if (multipleBaselines()) {
+        req.flash("error", "You can only save scores for one baseline.");
+        rerenderNewStudent();
       } else {
         let createdStudent = await res.locals.store.createStudent(req.body.studentName, req.body.test_plan);
-
         if (!createdStudent) {
           throw new Error('Not Found.');
         } else {
           let baselineType = req.body.test_plan;
-          if (req.body.SATVerbal || req.body.SATMath) {
+          if (req.body.SATVerbal) {
             baselineType = 'SAT';
-          } else if (req.body.ACTEnglish || req.body.ACTMath || req.body.ACTReading || req.body.ACTScience) {
+          } else if (req.body.ACTEnglish) {
             baselineType = 'ACT';
           }
           let baseline = await res.locals.store.addBaseline(createdStudent.id, baselineType);
@@ -153,7 +175,7 @@ app.post("/students",
             ACTScience: req.body.ACTScience,
           };
 
-          let addBaselineScores = await res.locals.store.inputScore(baselineScores, baseline.id);
+          let addBaselineScores = await res.locals.store.updateScore(baselineScores, baseline.students_tests_id);
 
           if (!addBaselineScores) {
             throw new Error("Not Found.");
@@ -303,6 +325,7 @@ app.post("/students/:studentId/tests/:testId/toggle",
           student, test,
           flash: req.flash(),
           mock: !!req.body.mock,
+          projected: !!req.body.projected,
           SATVerbal: req.body.SATVerbal,
           SATMath: req.body.SATMath,
           ACTEnglish: req.body.ACTEnglish,
@@ -314,13 +337,9 @@ app.post("/students/:studentId/tests/:testId/toggle",
         // let test = await res.locals.store.loadTest(+studentId, +testId);
         let studentsTestsId = test.students_tests_id;
 
-        if (test.done && test.score_id) {
-          let clearScore = await res.locals.store.clearScore(+studentsTestsId);
-          if (!clearScore) throw new Error("Not Found.");
-        } else if (!test.done) {
-          let inputScore = await res.locals.store.inputScore(req.body, +studentsTestsId);
-          if (!inputScore) throw new Error("Not Found.");
-        }
+        let updateScore = await res.locals.store.updateScore(req.body, +studentsTestsId);
+        if (!updateScore) throw new Error("Not Found.");
+
         let toggled = await res.locals.store.toggleDoneTest(+studentId, +testId);
         if (!toggled) {
           throw new Error("Not Found.");
@@ -373,13 +392,8 @@ app.post("/students/:studentId/tests/:testId/edit",
           });
 
         } else {
-          if (test.score_id) {
-            let updateScore = await res.locals.store.updateScore(req.body, +test.students_tests_id);
-            if (!updateScore) throw new Error("Not Found.");
-          } else {
-            let inputScore = await res.locals.store.inputScore(req.body, +test.students_tests_id);
-            if (!inputScore) throw new Error("Not Found.");
-          }
+          let updateScore = await res.locals.store.updateScore(req.body, +test.students_tests_id);
+          if (!updateScore) throw new Error("Not Found.");
           req.flash("success", `"${test.title}" score changed.`);
           res.redirect(`/students/${studentId}`);
         }
@@ -462,11 +476,11 @@ app.post("/students/:studentId/filter",
       let testScores = [];
       for (let index = 0; index < student.tests.length; index += 1) {
         let test = student.tests[index];
-        let score = await res.locals.store.loadScore(+test.id);
+        let score = await res.locals.store.loadScore(+test.students_tests_id);
         testScores.push(res.locals.store.scoreString(score));
       }
 
-      let studentBaselineScore = await res.locals.store.loadScore(+student.baseline.id);
+      let studentBaselineScore = await res.locals.store.loadScore(+student.baseline.students_tests_id);
 
       res.render(req.session.studentView, {
         student,
@@ -551,7 +565,6 @@ app.post("/students/:studentId/edit",
     validate.ACTScore,
   ],
 
-  // eslint-disable-next-line max-statements
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
 
@@ -588,15 +601,19 @@ app.post("/students/:studentId/edit",
         if (!editedStudentInfo) {
           throw new Error("Not Found.");
         } else {
-          let studentBaseline = student.baseline;
-          console.log('okay', student);
-          if (student.baseline.score_id) {
-            let updateScore = await res.locals.store.updateScore(req.body, +studentBaseline.score_id);
-            if (!updateScore) throw new Error("Not Found.");
-          } else {
-            let inputScore = await res.locals.store.inputScore(req.body, +studentBaseline.students_tests_id);
-            if (!inputScore) throw new Error("Not Found.");
+          let baselineType = req.body.test_plan;
+          if (req.body.SATVerbal && req.body.SATMath) {
+            baselineType = 'SAT';
+          } else if (req.body.ACTEnglish && req.body.ACTMath && req.body.ACTReading && req.body.ACTScience) {
+            baselineType = 'ACT';
           }
+
+          if (student.baseline.test_type !== baselineType) {
+            student.baseline = await res.locals.store.addBaseline(student.id, baselineType);
+          }
+
+          let updateScore = await res.locals.store.updateScore(req.body, +student.baseline.students_tests_id);
+          if (!updateScore) throw new Error("Not Found.");
           req.flash("success", "Student updated.");
           res.redirect(`/students/${studentId}`);
         }

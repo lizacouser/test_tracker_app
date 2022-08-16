@@ -8,11 +8,11 @@ block testDisplay
       if test.done
         li(class="done")
           p #[strong #{test.title}] (#{test.test_pack})
-          form.check(id=test.score_id ? "confirm" : null, action=`/students/${student.id}/tests/${test.id}/toggle` method="post")
+          form.check(id=test.score_id ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
             button Done
           if test.done
             p= testScores[testIndex]
-            form(action=`/students/${student.id}/tests/${test.id}/edit` method="get")
+            form(action=`/students/${student.id}/tests/${test.test_id}/edit` method="get")
               button.edit(type="submit") Edit Score
           br
           br

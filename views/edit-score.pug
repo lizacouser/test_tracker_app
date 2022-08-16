@@ -7,14 +7,14 @@ block main
       ul
         li
           if test.score_id
-            form(action=`/students/${student.id}/tests/${test.id}/clear` method="post")
+            form(action=`/students/${student.id}/tests/${test.test_id}/clear` method="post")
               button(type="submit") Clear Score
         li
-          form#confirm(action=`/students/${student.id}/tests/${test.id}/toggle` method="post")
+          form#confirm(action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
             if test.done
               button Mark Undone
 
-  form(action=(test.done ? `/students/${student.id}/tests/${test.id}/edit` : `/students/${student.id}/tests/${test.id}/toggle`) method="post")
+  form(action=(test.done ? `/students/${student.id}/tests/${test.test_id}/edit` : `/students/${student.id}/tests/${test.test_id}/toggle`) method="post")
     dl
       dt
         h2 Enter score:
