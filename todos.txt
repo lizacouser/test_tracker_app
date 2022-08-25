@@ -1,46 +1,19 @@
 re: coding my test taking app
-- [ ] automatically add first pack
 - [ ] Add selected property to html form for filtering
 - [ ] Add PSATs
-- [ ] Now does score_id ever matter? it seems to matter as a boolean in:
-  - edit-score, student-all, student-completed, student-current, student-incomplete, student
-  -maybe change to "hasScore" or something
 - [ ] is it worth replacing all the test_id in the parameters with students_tests_ids, and doing look-ups by st id instead of student_id combined with test_id??
+- [ ] compare baselines with highest score
+- [ ] convert SAT to ACT
+- [ ] Add flash messaging for checking “projected” or “mock” without scores?
 
-Identify baseline by date taken?
-
-Tests should store type not plan
 
 Cumulative calculated and stored in scores spreadsheet?
-
 Group display by test pack?
-
 Add official tests?
-
 Make byrne teach me prettier so I can reformat code
-
 How to make it so that you can save values to score input form
-
 ADD DATE TAKEN?
-
-Add flash messaging for checking “projected” or “mock” without scores?
-
-Change score title to ‘section’
-
-Have to make form so that rather than storing SATVerbal, ACTMath, etc, you just submit 
-
--> take it back to basics
--> once you get it using a database, you can start adapting
--> don’t be stupid trying to fix things that are overcomplicated
-
-
-
-
-How to fix baseline problem:
--> add baseline data to seed data
--> comment out everything that talks about baseline
--> add it back into tests
-
+how to prevent submitting multiple scores when toggling on students page by pressing enter?
 
 
 sorted student result [
@@ -116,7 +89,7 @@ load student result {
     test_type: 'ACT',
     test_plan: 'ACT',
     students_tests_id: 20,
-    score_id: 20
+    hasScore: 20
   },
   tests: []
 }
@@ -132,7 +105,7 @@ load student result {
     id: 51,
     test_type: 'SAT',
     students_tests_id: 17,
-    score_id: 17
+    hasScore: 17
   },
   tests: [
     {
@@ -142,7 +115,7 @@ load student result {
       test_type: 'SAT',
       test_pack: 'SAT Pack A',
       students_tests_id: 10,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB9',
@@ -151,7 +124,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 2,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB6',
@@ -160,7 +133,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 5,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB1',
@@ -169,7 +142,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 8,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB5',
@@ -178,7 +151,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 6,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB7',
@@ -187,7 +160,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 4,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB10',
@@ -196,7 +169,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 1,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB8',
@@ -205,7 +178,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 3,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'Oct 2021 US',
@@ -214,7 +187,7 @@ load student result {
       test_type: 'SAT',
       test_pack: 'SAT Pack A',
       students_tests_id: 9,
-      score_id: null
+      hasScore: null
     },
     {
       title: 'BB3',
@@ -223,7 +196,7 @@ load student result {
       test_type: 'SAT',
       test_pack: '2020 SAT Blue Book',
       students_tests_id: 7,
-      score_id: null
+      hasScore: null
     }
   ]
 }
@@ -235,7 +208,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 1,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB9',
@@ -244,7 +217,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 2,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB6',
@@ -253,7 +226,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 5,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB5',
@@ -262,7 +235,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 6,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB3',
@@ -271,7 +244,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 7,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB1',
@@ -280,7 +253,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 8,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB8',
@@ -289,7 +262,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 3,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'BB7',
@@ -298,7 +271,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: '2020 SAT Blue Book',
     students_tests_id: 4,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'Oct 2021 US',
@@ -307,7 +280,7 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: 'SAT Pack A',
     students_tests_id: 9,
-    score_id: null
+    hasScore: null
   },
   {
     title: 'May 2021 Int',
@@ -316,6 +289,6 @@ sorted tests result [
     test_type: 'SAT',
     test_pack: 'SAT Pack A',
     students_tests_id: 10,
-    score_id: null
+    hasScore: null
   }
 ]

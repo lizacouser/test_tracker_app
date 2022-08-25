@@ -180,8 +180,14 @@ app.post("/students",
           if (!addBaselineScores) {
             throw new Error("Not Found.");
           } else {
-            req.flash("success", "The student has been created.");
-            res.redirect(`/students`);
+            let nextPacks = await res.locals.store.nextPacks(createdStudent.id, createdStudent.test_plan);
+            let firstPackId = nextPacks[0].id;
+            if (!firstPackId) throw new Error("Not Found.");
+            else {
+              await res.locals.store.addTestPack(createdStudent.id, firstPackId);
+              req.flash("success", "The student has been created.");
+              res.redirect(`/students/${createdStudent.id}`);
+            }
           }
         }
       }
@@ -226,11 +232,11 @@ app.get("/students/:studentId",
       let testScores = [];
       for (let index = 0; index < student.tests.length; index += 1) {
         let test = student.tests[index];
-        let score = await res.locals.store.loadScore(+test.score_id);
+        let score = await res.locals.store.loadScore(+test.students_tests_id);
         testScores.push(res.locals.store.scoreString(score));
       }
 
-      let studentBaselineScore = await res.locals.store.loadScore(+student.baseline.score_id);
+      let studentBaselineScore = await res.locals.store.loadScore(+student.baseline.students_tests_id);
 
       res.render(req.session.studentView, {
         student,
@@ -253,7 +259,7 @@ app.get("/students/:studentId/edit",
     if (!student) {
       next(new Error("Not found."));
     } else {
-      res.render("edit-student", { student, studentBaseline: await res.locals.store.loadScore(+student.baseline.score_id), });
+      res.render("edit-student", { student, studentBaseline: await res.locals.store.loadScore(+student.baseline.students_tests_id), });
     }
   })
 );
@@ -271,7 +277,7 @@ app.get("/students/:studentId/tests/:testId/edit",
       if (!test) {
         throw new Error("Not Found.");
       } else {
-        let score = await res.locals.store.loadScore(+test.score_id);
+        let score = await res.locals.store.loadScore(+test.students_tests_id);
         res.render("edit-score", { student, test, score });
       }
     }
@@ -339,6 +345,11 @@ app.post("/students/:studentId/tests/:testId/toggle",
 
         let updateScore = await res.locals.store.updateScore(req.body, +studentsTestsId);
         if (!updateScore) throw new Error("Not Found.");
+
+        if (!student.baseline.hasScore) {
+          let updateBaseline = await res.locals.store.updateScore(req.body, +student.baseline.students_tests_id);
+          if (!updateBaseline) throw new Error("Not Found.");
+        }
 
         let toggled = await res.locals.store.toggleDoneTest(+studentId, +testId);
         if (!toggled) {
@@ -575,7 +586,7 @@ app.post("/students/:studentId/edit",
         flash: req.flash(),
         studentName: req.body.studentName,
         student,
-        studentBaseline: await res.locals.store.loadScore(+student.baseline.score_id),
+        studentBaseline: await res.locals.store.loadScore(+student.baseline.students_tests_id),
         SATVerbal: req.body.SATVerbal,
         SATMath: req.body.SATMath,
         ACTEnglish: req.body.ACTEnglish,

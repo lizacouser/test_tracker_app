@@ -9,6 +9,11 @@ block main
           form.delete(action=`/students/${student.id}/destroy` method="post")
             button.delete(type="submit") Delete Student
 
+        li
+          if student.baseline.hasScore
+            form(action=`/students/${student.id}/tests/${student.baseline.test_id}/clear` method="post")
+              button(type="submit") Clear Baseline
+
   form(action=`/students/${student.id}/edit` method="post")
     dl
       dt
