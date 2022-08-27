@@ -10,7 +10,7 @@ block main
             button.delete(type="submit") Delete Student
 
         li
-          if student.baseline.hasScore
+          if student.baseline.has_score
             form(action=`/students/${student.id}/tests/${student.baseline.test_id}/clear` method="post")
               button(type="submit") Clear Baseline
 

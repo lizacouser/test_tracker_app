@@ -6,7 +6,7 @@ block main
       h2 Editing '#{test.title}'
       ul
         li
-          if test.hasScore
+          if test.has_score
             form(action=`/students/${student.id}/tests/${test.test_id}/clear` method="post")
               button(type="submit") Clear Score
         li

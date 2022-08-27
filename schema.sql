@@ -35,21 +35,33 @@ CREATE TABLE scores (
   mock boolean NOT NULL DEFAULT false,
   projected boolean NOT NULL DEFAULT false,
   act_english integer	
-    CHECK(act_english BETWEEN 20 AND 36),
+    CHECK(act_english BETWEEN 1 AND 36),
   act_math integer
-    CHECK(act_math BETWEEN 20 AND 36),
+    CHECK(act_math BETWEEN 1 AND 36),
   act_reading integer
-    CHECK(act_reading BETWEEN 20 AND 36),
+    CHECK(act_reading BETWEEN 1 AND 36),
   act_science integer
-    CHECK(act_science BETWEEN 20 AND 36),
+    CHECK(act_science BETWEEN 1 AND 36),
   sat_verbal integer	
-    CHECK(sat_verbal BETWEEN 400 AND 800),
+    CHECK(sat_verbal BETWEEN 200 AND 800),
   sat_math integer
-    CHECK(sat_math BETWEEN 400 AND 800),
+    CHECK(sat_math BETWEEN 200 AND 800),
+  cumulative integer
+    CHECK(cumulative BETWEEN 400 AND 1600 OR cumulative BETWEEN 1 AND 36),
+  converted_cumulative integer
+    CHECK(cumulative BETWEEN 400 AND 1600 OR cumulative BETWEEN 1 AND 36),
   students_tests_id integer
     REFERENCES students_tests(id)
     ON DELETE CASCADE
 );
+
+CREATE TABLE score_conversions (
+  id serial PRIMARY KEY,
+  sat_score integer NOT NULL
+    CHECK(sat_score BETWEEN 400 AND 1600),
+  act_score integer NOT NULL
+    CHECK(act_score BETWEEN 1 AND 36)
+)
 
 -- CREATE TABLE scores (
 --   id serial PRIMARY KEY,

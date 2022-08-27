@@ -3,9 +3,17 @@ extends layout
 block main
   section#tests
     header
-      h2 Name: #{student.name}
-      p Test plan: #{student.test_plan}
-      p Baseline: #{studentBaseline}
+      p #[strong Name:] #{student.name}
+      p #[strong Test plan:] #{student.test_plan}
+      p #[strong Baseline:] #{studentBaseline}
+      if (studentBaseline !== studentHighest)
+        p #[strong Best:] #{studentHighest}
+        p #[strong Improvement:] +#{improvement} points
+      //- p Covered:
+      //- form.check(action=`/students/${student.id}/technique` method="post")
+      //-   each technique in ['TRAC', 'DAC', 'VAC', 'STAC', 'CHARGE'] 
+      //-     label(for='technique') #{technique}
+      //-     input(type='checkbox', id=technique)
 
       ul
         li
@@ -27,15 +35,14 @@ block main
 
           li
             form(action=`/students/${student.id}/filter` method="post")
+              label(for="filter") Filter By:
               select(id="filter" name="filter" onchange='this.form.submit()')
-                option(selected disabled) Filter By:
-                option(value="plan") Curent Test Plan
+                option(value="plan", selected=(currentFilter === 'student')) Curent Test Plan
                 each pack in studentPacks
-                  option(value=pack.title) #{pack.title}
-                //- option(value="current") Current Test Pack
-                option(value="completed") Completed
-                option(value="incomplete") Incomplete
-                option(value="all") Show All Test Types
+                  option(value=pack.title, selected=(currentFilter === pack.title)) #{pack.title}
+                option(value="completed", selected=(currentFilter === 'completed')) Completed
+                option(value="incomplete", selected=(currentFilter === 'incomplete')) Incomplete
+                option(value="all", selected=(currentFilter === 'all')) Show All Test Types
 
     ul
       if student.tests.length === 0
@@ -43,8 +50,8 @@ block main
       block testDisplay
         each test, testIndex in student.tests
           li(class=test.done ? "done" : "")
-            p #[strong #{test.title}] (#{test.test_pack})
-            form.check(id=test.hasScore ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
+            p #[strong #{test.title}] #{test.test_pack}
+            form.check(id=test.has_score ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
               button Done
               if !test.done
                 if test.test_type === "SAT"
@@ -90,21 +97,23 @@ block main
             br
             br
 
-    form(action=`/students/${student.id}/add_tests` method="post")
-      label(for="newPack") Add a new test pack
-      select(id="newPack", name="newPack")
-        each pack in nextPacks
-          option(value=pack.id) #{pack.title}
-      button Add Pack
-    br
-
-    if (student.tests.length > 0)
-      form.remove_tests(action=`/students/${student.id}/remove_tests` method="post")
-        label(for="removePack") Remove test pack
-        select(id="removePack", name="removePack")
-          each pack in studentPacks
+    if nextPacks
+      form(action=`/students/${student.id}/add_tests` method="post")
+        label(for="newPack") Add a new test pack
+        select(id="newPack", name="newPack")
+          each pack in nextPacks
             option(value=pack.id) #{pack.title}
-        button Remove Pack
+        button Add Pack
+      br
+
+    if studentPacks
+      if (student.tests.length > 0)
+        form.remove_tests(action=`/students/${student.id}/remove_tests` method="post")
+          label(for="removePack") Remove test pack
+          select(id="removePack", name="removePack")
+            each pack in studentPacks
+              option(value=pack.id) #{pack.title}
+          button Remove Pack
 
 block headerLinks
   .actions

@@ -7,7 +7,7 @@ block testDisplay
     if !test.done
       li
         p #[strong #{test.title}] (#{test.test_pack})
-        form.check(id=test.hasScore ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
+        form.check(id=test.has_score ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
           button Done
           if !test.done
             if test.test_type === "SAT"

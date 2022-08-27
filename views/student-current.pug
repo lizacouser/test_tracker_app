@@ -2,10 +2,10 @@ extends student
 
 block testDisplay
   each test, testIndex in student.tests
-    if currentPack === test.test_pack
+    if currentFilter === test.test_pack
       li(class=test.done ? "done" : "")
         p #[strong #{test.title}] (#{test.test_pack})
-        form.check(id=test.hasScore ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
+        form.check(id=test.has_score ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
           button Done
           if !test.done
             if test.test_type === "SAT"

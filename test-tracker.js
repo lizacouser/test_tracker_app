@@ -175,7 +175,7 @@ app.post("/students",
             ACTScience: req.body.ACTScience,
           };
 
-          let addBaselineScores = await res.locals.store.updateScore(baselineScores, baseline.students_tests_id);
+          let addBaselineScores = await res.locals.store.updateScore(baselineScores, baseline.students_tests_id, baseline.test_type);
 
           if (!addBaselineScores) {
             throw new Error("Not Found.");
@@ -237,12 +237,20 @@ app.get("/students/:studentId",
       }
 
       let studentBaselineScore = await res.locals.store.loadScore(+student.baseline.students_tests_id);
+      let studentHighest = await res.locals.store.highestTestScore(+studentId);
+
+      let improvement = 0;
+      if (studentHighest) {
+        improvement = studentHighest.cumulative - (studentBaselineScore ? studentBaselineScore.cumulative : 0);
+      }
 
       res.render(req.session.studentView, {
         student,
         testScores,
+        improvement,
         nextPacks: await res.locals.store.nextPacks(studentId, student.test_plan),
         studentPacks: await res.locals.store.studentPacks(studentId, student.test_plan),
+        studentHighest: res.locals.store.scoreString(studentHighest),
         studentBaseline: res.locals.store.scoreString(studentBaselineScore),
         studentIsDone: student.tests.every(test => test.done),
         someTestsDone: student.tests.some(test => test.done),
@@ -343,11 +351,11 @@ app.post("/students/:studentId/tests/:testId/toggle",
         // let test = await res.locals.store.loadTest(+studentId, +testId);
         let studentsTestsId = test.students_tests_id;
 
-        let updateScore = await res.locals.store.updateScore(req.body, +studentsTestsId);
+        let updateScore = await res.locals.store.updateScore(req.body, +studentsTestsId, test.test_type);
         if (!updateScore) throw new Error("Not Found.");
 
-        if (!student.baseline.hasScore) {
-          let updateBaseline = await res.locals.store.updateScore(req.body, +student.baseline.students_tests_id);
+        if (!student.baseline.has_score) {
+          let updateBaseline = await res.locals.store.updateScore(req.body, +student.baseline.students_tests_id, student.baseline.test_type);
           if (!updateBaseline) throw new Error("Not Found.");
         }
 
@@ -403,7 +411,7 @@ app.post("/students/:studentId/tests/:testId/edit",
           });
 
         } else {
-          let updateScore = await res.locals.store.updateScore(req.body, +test.students_tests_id);
+          let updateScore = await res.locals.store.updateScore(req.body, +test.students_tests_id, test.test_type);
           if (!updateScore) throw new Error("Not Found.");
           req.flash("success", `"${test.title}" score changed.`);
           res.redirect(`/students/${studentId}`);
@@ -463,24 +471,27 @@ app.post("/students/:studentId/filter",
     } else {
       student.tests = await res.locals.store.sortedTests(student);
       let filteredView = "student";
-      let filteredPack;
+      let currentFilter;
 
       switch (req.body.filter) {
         case "plan":
           res.redirect(`/students/${studentId}`);
           break;
         case "all":
+          currentFilter = 'all';
           student.tests = await res.locals.store.allTests(student);
           break;
         case "completed":
+          currentFilter = 'completed';
           filteredView += "-completed";
           break;
         case "incomplete":
+          currentFilter = 'incomplete';
           filteredView += "-incomplete";
           break;
         default:
           filteredView += "-current";
-          filteredPack = req.body.filter;
+          currentFilter = req.body.filter;
           break;
       }
       req.session.studentView = filteredView;
@@ -492,14 +503,22 @@ app.post("/students/:studentId/filter",
       }
 
       let studentBaselineScore = await res.locals.store.loadScore(+student.baseline.students_tests_id);
+      let studentHighest = await res.locals.store.highestTestScore(+studentId);
+
+      let improvement = 0;
+      if (studentHighest) {
+        improvement = studentHighest.cumulative - (studentBaselineScore ? studentBaselineScore.cumulative : 0);
+      }
 
       res.render(req.session.studentView, {
         student,
         testScores,
+        studentHighest: res.locals.store.scoreString(studentHighest),
         studentBaseline: res.locals.store.scoreString(studentBaselineScore),
+        improvement,
         studentIsDone: student.tests.every(test => test.done),
         someTestsDone: student.tests.some(test => test.done),
-        currentPack: filteredPack,
+        currentFilter,
         nextPacks: await res.locals.store.nextPacks(studentId, student.test_plan),
         studentPacks: await res.locals.store.studentPacks(studentId, student.test_plan),
         flash: req.flash(),
@@ -623,7 +642,7 @@ app.post("/students/:studentId/edit",
             student.baseline = await res.locals.store.addBaseline(student.id, baselineType);
           }
 
-          let updateScore = await res.locals.store.updateScore(req.body, +student.baseline.students_tests_id);
+          let updateScore = await res.locals.store.updateScore(req.body, +student.baseline.students_tests_id, student.baseline.test_type);
           if (!updateScore) throw new Error("Not Found.");
           req.flash("success", "Student updated.");
           res.redirect(`/students/${studentId}`);
