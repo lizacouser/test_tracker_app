@@ -27,7 +27,8 @@ CREATE TABLE students_tests (
   student_id integer NOT NULL
     REFERENCES students(id)
     ON DELETE CASCADE,
-  done boolean NOT NULL DEFAULT false
+  done boolean NOT NULL DEFAULT false,
+  date_completed timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE scores (

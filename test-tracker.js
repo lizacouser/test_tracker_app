@@ -363,11 +363,15 @@ app.post("/students/:studentId/tests/:testId/toggle",
         if (!toggled) {
           throw new Error("Not Found.");
         } else {
+          let doneStatus;
           if (test.done) {
+            doneStatus = false;
             req.flash("success", `"${test.title}" marked as NOT done!`);
           } else {
+            doneStatus = true;
             req.flash("success", `"${test.title}" marked done.`);
           }
+          res.locals.store.updateTimestamp(studentsTestsId, doneStatus);
           res.redirect(`/students/${studentId}`);
         }
       }
@@ -413,6 +417,7 @@ app.post("/students/:studentId/tests/:testId/edit",
         } else {
           let updateScore = await res.locals.store.updateScore(req.body, +test.students_tests_id, test.test_type);
           if (!updateScore) throw new Error("Not Found.");
+          await res.locals.store.updateTimestamp(+test.students_tests_id, test.done);
           req.flash("success", `"${test.title}" score changed.`);
           res.redirect(`/students/${studentId}`);
         }
