@@ -1,8 +1,9 @@
 extends layout
 
 block main
-  if students === undefined || students.length === 0
-    p#no_list You don't have any students. Why not create one?
+  if signedIn
+    if students === undefined || students.length === 0
+      p#no_list You don't have any students. Why not create one?
   else
     section#students
       ul
@@ -24,5 +25,6 @@ block main
            
 
 block headerLinks
-  .actions
-    a.add(href="/students/new") New Student
+  if signedIn
+    .actions
+      a.add(href="/students/new") New Student

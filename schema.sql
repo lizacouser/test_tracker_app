@@ -1,3 +1,8 @@
+CREATE TABLE users (
+  username text PRIMARY KEY,
+  password text NOT NULL
+);
+
 CREATE TABLE students (
   id serial PRIMARY KEY,
   "name" text UNIQUE NOT NULL,
@@ -28,7 +33,7 @@ CREATE TABLE students_tests (
     REFERENCES students(id)
     ON DELETE CASCADE,
   done boolean NOT NULL DEFAULT false,
-  date_completed timestamp DEFAULT CURRENT_TIMESTAMP
+  date_completed timestamp
 );
 
 CREATE TABLE scores (

@@ -51,6 +51,8 @@ app.use((req, res, next) => {
 
 // Extract session info
 app.use((req, res, next) => {
+  res.locals.username = req.session.username;
+  res.locals.signedIn = req.session.signedIn;
   res.locals.flash = req.session.flash;
   delete req.session.flash;
   next();
@@ -65,6 +67,17 @@ app.use((req, _res, next) => {
   req.session.studentView = studentView;
   next();
 });
+
+// Detect unauthorized access to routes.
+const requiresAuthentication = (_req, res, next) => {
+  if (!res.locals.signedIn) {
+    console.log("Unauthorized.");
+    res.status(401).send("Unauthorized.");
+  } else {
+    next();
+  }
+};
+
 
 // Redirect start page
 app.get("/", (_req, res) => {
@@ -95,13 +108,18 @@ app.get("/students",
 );
 
 // Render new student page
-app.get("/students/new", (_req, res) => {
-  res.render("new-student");
-});
+app.get("/students/new",
+  requiresAuthentication,
+  (_req, res) => {
+    res.render("new-student");
+  }
+);
 
 
 // Create a new student
 app.post("/students",
+  requiresAuthentication,
+
   [
     validate.uniqueName,
     validate.SATScore,
@@ -204,6 +222,7 @@ app.post("/students",
 
 // Delete a student
 app.post("/students/:studentId/destroy",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
 
@@ -261,6 +280,7 @@ app.get("/students/:studentId",
 
 // Render edit todo list form
 app.get("/students/:studentId/edit",
+  requiresAuthentication,
   catchError(async(req, res, next) => {
     let studentId = req.params.studentId;
     let student = await res.locals.store.loadStudent(+studentId);
@@ -272,8 +292,44 @@ app.get("/students/:studentId/edit",
   })
 );
 
+app.get("/users/signin", (req, res) => {
+  req.flash('info', 'Please sign in.');
+  res.render('sign-in', {
+    flash: req.flash(),
+  });
+});
+
+app.post("/users/signin",
+  catchError(async (req, res) => {
+    let username = req.body.username.trim();
+    let password = req.body.password;
+    if (username === 'admin' && password === 'secret') {
+      req.session.username = username;
+      req.session.signedIn = true;
+      req.flash('success', 'Welcome!');
+      res.redirect('/students');
+    } else {
+      req.flash('error', 'Invalid credentials.');
+      res.render('sign-in', {
+        flash: req.flash(),
+        username: req.body.username,
+      });
+    }
+  })
+);
+
+app.post("/users/signout",
+  catchError(async (req, res) => {
+    delete req.session.username;
+    delete req.session.signedIn;
+    req.flash('success', 'Welcome!');
+    res.redirect('/students');
+  })
+);
+
 
 app.get("/students/:studentId/tests/:testId/edit",
+  requiresAuthentication,
   catchError(async (req, res, _next) => {
     let { studentId, testId } = { ...req.params };
     let student = await res.locals.store.loadStudent(+studentId);
@@ -293,6 +349,7 @@ app.get("/students/:studentId/tests/:testId/edit",
 );
 
 app.post("/students/:studentId/tests/:testId/clear",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let { studentId, testId } = { ...req.params };
     let student = await res.locals.store.loadStudent(+studentId);
@@ -315,6 +372,8 @@ app.post("/students/:studentId/tests/:testId/clear",
 
 // Toggle completion status of a todo
 app.post("/students/:studentId/tests/:testId/toggle",
+  requiresAuthentication,
+
   [
     validate.SATScore,
     validate.ACTScore,
@@ -381,7 +440,7 @@ app.post("/students/:studentId/tests/:testId/toggle",
 
 // edit score
 app.post("/students/:studentId/tests/:testId/edit",
-
+  requiresAuthentication,
   [
     validate.SATScore,
     validate.ACTScore,
@@ -428,6 +487,7 @@ app.post("/students/:studentId/tests/:testId/edit",
 
 // Mark all todos as done
 app.post("/students/:studentId/complete_all",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
     let student = res.locals.store.loadStudent(+studentId);
@@ -448,6 +508,7 @@ app.post("/students/:studentId/complete_all",
 
 // Uncheck all todos
 app.post("/students/:studentId/uncheck_all",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
     let student = await res.locals.store.loadStudent(+studentId);
@@ -468,6 +529,7 @@ app.post("/students/:studentId/uncheck_all",
 
 // filter test display
 app.post("/students/:studentId/filter",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
     let student = await res.locals.store.loadStudent(+studentId);
@@ -534,6 +596,7 @@ app.post("/students/:studentId/filter",
 
 // add test pack
 app.post("/students/:studentId/add_tests",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
     try {
@@ -563,7 +626,7 @@ app.post("/students/:studentId/add_tests",
 
 // remove test pack
 app.post("/students/:studentId/remove_tests",
-  // eslint-disable-next-line max-statements
+  requiresAuthentication,
   catchError(async (req, res) => {
     let studentId = req.params.studentId;
     try {
@@ -594,6 +657,7 @@ app.post("/students/:studentId/remove_tests",
 
 // Edit student
 app.post("/students/:studentId/edit",
+  requiresAuthentication,
   [
     validate.uniqueName,
     validate.SATScore,

@@ -1,27 +1,15 @@
 re: coding my test taking app
-- [x] Add selected property to html form for filtering
+- [ ] add user functionality!
 - [ ] Add PSATs
 - [ ] make all if test type = ACTs into switch cases to add more possible tests
-- [x] automatically projected if you don't fill out all section scores
-- [x] updating score is updating baseline every time!!
 - [ ] refactor update score to make better use of test type
 - [ ] refactor scoreString to just filter non-null values and map to ACT/SAT label array
-- [x] bug in "mark all incomplete" not toggling the todo, but is clearing baseline
 - [ ] is it worth replacing all the test_id in the parameters with students_tests_ids, and doing look-ups by st id instead of student_id combined with test_id??
-- [x] calculate highest score
-- [x] add cumulative score to data
-- [x] compare baselines with highest score
-- [x] convert SAT to ACT
 - [ ] track what techniques you've covered
 - [ ] add space for notes?
-- [x] change to has_score rather than hasScore
 - [ ] Add flash messaging for checking “projected” or “mock” without scores?
-
-Cumulative calculated and stored in scores spreadsheet?
-Group display by test pack?
-Add official tests?
-Make byrne teach me prettier so I can reformat code
-How to make it so that you can save values to score input form
-ADD DATE TAKEN?
-how to prevent submitting multiple scores when toggling on students page by pressing enter?
+- [ ] Add official tests?
+- [ ] Make byrne teach me prettier so I can reformat code
+- [ ] How to make it so that you can save values to score input form
+- [ ] how to prevent submitting multiple scores when toggling on students page by pressing enter?
 

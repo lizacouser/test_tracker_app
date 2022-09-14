@@ -25,3 +25,16 @@ html(lang="en-US")
               li.flash(class=kind)= message
 
       block main
+
+      block signInStatus
+        if !signedIn
+          form(action='/users/signin', method='get')
+            fieldset.actions
+              p You are not signed in.
+              input(type="submit" value="Sign in")
+        else
+          form(action='/users/signout', method='post')
+            fieldset.actions
+              p Signed in as #{username}
+              input(type="submit" value="Sign out")
+        
