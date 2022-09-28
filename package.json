@@ -7,6 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
+    "heroku-postbuild": "npm install --production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx nodemon test-tracker.js"
   },
@@ -15,6 +16,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-loki": "^1.2.0",
+    "dotenv": "^16.0.2",
     "express": "^4.17.3",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.2",
@@ -22,6 +24,10 @@
     "morgan": "^1.10.0",
     "pg": "^8.7.3",
     "pug": "^3.0.2"
+  },
+  "engines": {
+    "node": "17.9.0",
+    "npm": "8.12.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

@@ -1,8 +1,9 @@
 re: coding my test taking app
 - [ ] use check constraints to valid data, rather than functions
-- [ ] add user functionality!
+- [x] add user functionality!
+- [ ] deploy
 - [ ] Add PSATs
-- [ ] N+1 Query Optimization
+- [x] N+1 Query Optimization
 - [ ] fix session persistence
 - [ ] add explaining text
 - [ ] refector new student stuff

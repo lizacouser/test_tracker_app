@@ -1,4 +1,6 @@
 node_modules
 .DS_Store
 lib/users.sql
+test-tracker.db
 session-store.db
+.env
