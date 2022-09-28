@@ -15,35 +15,34 @@ block main
       //-     label(for='technique') #{technique}
       //-     input(type='checkbox', id=technique)
 
-      if signedIn
-        ul
-          li
-            form(action=`/students/${student.id}/edit` method="get")
-              button.edit(type="submit") Edit Student
+      ul
+        li
+          form(action=`/students/${student.id}/edit` method="get")
+            button.edit(type="submit") Edit Student
 
-          if student.tests.length > 0
-            if !studentIsDone
-              li
-                form.complete_all(action=`/students/${student.id}/complete_all`
-                                  method="post")
-                  button.check(type="submit") Complete All
-
-            if someTestsDone
-              li
-                form.uncheck_all(action=`/students/${student.id}/uncheck_all`
-                                  method="post")
-                  button.check(type="submit") Mark All Incomplete
-
+        if student.tests.length > 0
+          if !studentIsDone
             li
-              form(action=`/students/${student.id}/filter` method="post")
-                label(for="filter") Filter By:
-                select(id="filter" name="filter" onchange='this.form.submit()')
-                  option(value="plan", selected=(currentFilter === 'student')) Curent Test Plan
-                  each pack in studentPacks
-                    option(value=pack.title, selected=(currentFilter === pack.title)) #{pack.title}
-                  option(value="completed", selected=(currentFilter === 'completed')) Completed
-                  option(value="incomplete", selected=(currentFilter === 'incomplete')) Incomplete
-                  option(value="all", selected=(currentFilter === 'all')) Show All Test Types
+              form.complete_all(action=`/students/${student.id}/complete_all`
+                                method="post")
+                button.check(type="submit") Complete All
+
+          if someTestsDone
+            li
+              form.uncheck_all(action=`/students/${student.id}/uncheck_all`
+                                method="post")
+                button.check(type="submit") Mark All Incomplete
+
+          li
+            form(action=`/students/${student.id}/filter` method="post")
+              label(for="filter") Filter By:
+              select(id="filter" name="filter" onchange='this.form.submit()')
+                option(value="plan", selected=(currentFilter === 'student')) Curent Test Plan
+                each pack in studentPacks
+                  option(value=pack.title, selected=(currentFilter === pack.title)) #{pack.title}
+                option(value="completed", selected=(currentFilter === 'completed')) Completed
+                option(value="incomplete", selected=(currentFilter === 'incomplete')) Incomplete
+                option(value="all", selected=(currentFilter === 'all')) Show All Test Types
 
     ul
       if student.tests.length === 0
@@ -51,79 +50,76 @@ block main
       block testDisplay
         each test, testIndex in student.tests
           li(class=test.done ? "done" : "")
-            if signedIn
-              p #[strong #{test.title}] #{test.test_pack}
-              form.check(id=test.has_score ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
-                button Done
-                if !test.done
-                  if test.test_type === "SAT"
-                    input(type="number"
-                        id="SATVerbal"
-                        name="SATVerbal"
-                        placeholder="verbal"
-                        value=SATVerbal)
-                    input(type="number"
-                        id="SATMath"
-                        name="SATMath"
-                        placeholder="math"
-                        value=SATMath)
-                  else if test.test_type === "ACT"
-                    input(type="number"
-                        id="ACTEnglish"
-                        name="ACTEnglish"
-                        placeholder="english"
-                        value=ACTEnglish)
-                    input(type="number"
-                        id="ACTMath"
-                        name="ACTMath"
-                        placeholder="math"
-                        value=ACTMath)
-                    input(type="number"
-                        id="ACTReading"
-                        name="ACTReading"
-                        placeholder="reading"
-                        value=ACTReading)
-                    input(type="number"
-                        id="ACTScience"
-                        name="ACTScience"
-                        placeholder="science"
-                        value=ACTScience)
-                  input(type="checkbox" id="projected" name="projected" value=1)
-                  label(for="projected")  Projected 
-                  input(type="checkbox" id="mock" name="mock" value=1)
-                  label(for="mock")  Mock
-              if test.done
-                p= testScores[testIndex]
-                form(action=`/students/${student.id}/tests/${test.test_id}/edit` method="get")
-                  button.edit(type="submit") Edit Score
-                p Modified #{test.date_modified}
-              br
-              br
-            else
-              p #[strong #{test.title}] #{test.test_pack}
+            p #[strong #{test.title}] #{test.test_pack}
+            form.check(id=test.has_score ? "confirm" : null, action=`/students/${student.id}/tests/${test.test_id}/toggle` method="post")
+              button Done
+              if !test.done
+                if test.test_type === "SAT"
+                  input(type="number"
+                      id="SATVerbal"
+                      name="SATVerbal"
+                      placeholder="verbal"
+                      value=SATVerbal)
+                  input(type="number"
+                      id="SATMath"
+                      name="SATMath"
+                      placeholder="math"
+                      value=SATMath)
+                else if test.test_type === "ACT"
+                  input(type="number"
+                      id="ACTEnglish"
+                      name="ACTEnglish"
+                      placeholder="english"
+                      value=ACTEnglish)
+                  input(type="number"
+                      id="ACTMath"
+                      name="ACTMath"
+                      placeholder="math"
+                      value=ACTMath)
+                  input(type="number"
+                      id="ACTReading"
+                      name="ACTReading"
+                      placeholder="reading"
+                      value=ACTReading)
+                  input(type="number"
+                      id="ACTScience"
+                      name="ACTScience"
+                      placeholder="science"
+                      value=ACTScience)
+                input(type="checkbox" id="projected" name="projected" value=1)
+                label(for="projected")  Projected 
+                input(type="checkbox" id="mock" name="mock" value=1)
+                label(for="mock")  Mock
+            if test.done
               p= testScores[testIndex]
+              form(action=`/students/${student.id}/tests/${test.test_id}/edit` method="get")
+                button.edit(type="submit") Edit Score
+              p Modified #{test.date_modified}
+            br
+            br
 
-    if signedIn
-      ul
-        li
-          if nextPacks
-            form(action=`/students/${student.id}/add_tests` method="post")
+    dl
+      dt
+        if nextPacks
+          form(action=`/students/${student.id}/add_tests` method="post")
+            fieldset.actions
               label(for="newPack") Add a new test pack
               select(id="newPack", name="newPack")
                 each pack in nextPacks
                   option(value=pack.id) #{pack.title}
-              button Add Pack
-            br
+              button Add pack
+          br
 
-        li
-          if studentPacks
-            if (student.tests.length > 0)
-              form.remove_tests(action=`/students/${student.id}/remove_tests` method="post")
+      dt
+        if studentPacks
+          if (student.tests.length > 0)
+            form.remove_tests(action=`/students/${student.id}/remove_tests` method="post")
+              fieldset.actions
                 label(for="removePack") Remove test pack
                 select(id="removePack", name="removePack")
                   each pack in studentPacks
                     option(value=pack.id) #{pack.title}
-                button Remove Pack
+                button Remove pack
 
 block headerLinks
   .actions

@@ -71,8 +71,9 @@ app.use((req, _res, next) => {
 // Detect unauthorized access to routes.
 const requiresAuthentication = (_req, res, next) => {
   if (!res.locals.signedIn) {
-    console.log("Unauthorized.");
-    res.status(401).send("Unauthorized.");
+    res.redirect(302, "/users/signin");
+    // console.log("Unauthorized.");
+    // res.status(401).send("Unauthorized.");
   } else {
     next();
   }
@@ -86,7 +87,9 @@ app.get("/", (_req, res) => {
 
 // Render the list of students
 app.get("/students",
+  requiresAuthentication,
   catchError(async (_req, res) => {
+
     let store = res.locals.store;
     let students = await store.sortedStudents();
 
@@ -180,7 +183,7 @@ app.post("/students",
           } else if (req.body.ACTEnglish) {
             baselineType = 'ACT';
           }
-          let baseline = await res.locals.store.addBaseline(createdStudent.id, baselineType);
+          let baselineId = await res.locals.store.addBaseline(createdStudent.id, baselineType);
 
           let baselineScores = {
             mock: false,
@@ -193,7 +196,7 @@ app.post("/students",
             ACTScience: req.body.ACTScience,
           };
 
-          let addBaselineScores = await res.locals.store.updateScore(baselineScores, baseline.students_tests_id, baseline.test_type);
+          let addBaselineScores = await res.locals.store.updateScore(baselineScores, baselineId, baselineType);
 
           if (!addBaselineScores) {
             throw new Error("Not Found.");
@@ -238,6 +241,7 @@ app.post("/students/:studentId/destroy",
 
 // Render individual todo list and its todos
 app.get("/students/:studentId",
+  requiresAuthentication,
   catchError(async (req, res) => {
     req.session.studentView = "student";
     let studentId = req.params.studentId;
@@ -303,7 +307,9 @@ app.post("/users/signin",
   catchError(async (req, res) => {
     let username = req.body.username.trim();
     let password = req.body.password;
-    if (username === 'admin' && password === 'secret') {
+
+    let isValidUser = await res.locals.store.isValidUser(username, password);
+    if (isValidUser) {
       req.session.username = username;
       req.session.signedIn = true;
       req.flash('success', 'Welcome!');
@@ -319,7 +325,7 @@ app.post("/users/signin",
 );
 
 app.post("/users/signout",
-  catchError(async (req, res) => {
+  catchError((req, res) => {
     delete req.session.username;
     delete req.session.signedIn;
     req.flash('success', 'Welcome!');

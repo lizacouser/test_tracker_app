@@ -6,7 +6,8 @@ CREATE TABLE users (
 CREATE TABLE students (
   id serial PRIMARY KEY,
   "name" text UNIQUE NOT NULL,
-  test_plan text CHECK(test_plan = 'SAT' or test_plan = 'ACT')
+  test_plan text CHECK(test_plan = 'SAT' or test_plan = 'ACT'),
+  username text NOT NULL
 );
 
 CREATE TABLE packs (
@@ -33,7 +34,8 @@ CREATE TABLE students_tests (
     REFERENCES students(id)
     ON DELETE CASCADE,
   done boolean NOT NULL DEFAULT false,
-  date_completed timestamp
+  date_completed timestamp,
+  username text NOT NULL
 );
 
 CREATE TABLE scores (

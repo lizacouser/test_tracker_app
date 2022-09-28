@@ -1,6 +1,11 @@
 re: coding my test taking app
+- [ ] use check constraints to valid data, rather than functions
 - [ ] add user functionality!
 - [ ] Add PSATs
+- [ ] N+1 Query Optimization
+- [ ] fix session persistence
+- [ ] add explaining text
+- [ ] refector new student stuff
 - [ ] make all if test type = ACTs into switch cases to add more possible tests
 - [ ] refactor update score to make better use of test type
 - [ ] refactor scoreString to just filter non-null values and map to ACT/SAT label array

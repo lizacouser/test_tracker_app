@@ -1,5 +1,5 @@
-INSERT INTO students (name, test_plan)
-  VALUES ('Liza', 'SAT'), ('Byrne', 'ACT');
+INSERT INTO students (name, test_plan, username)
+  VALUES ('Liza', 'SAT', 'admin'), ('Byrne', 'ACT', 'admin');
 
 INSERT INTO packs (title, test_type, "order")
   VALUES ('2020 SAT Blue Book', 'SAT', 1),
@@ -67,25 +67,25 @@ INSERT INTO tests (title, pack_id)
          ('Baseline PSAT/SAT', 9),
          ('Baseline ACT', 10);
 
-INSERT INTO students_tests (test_id, student_id, done, date_completed)
-  VALUES (1, 1, true, '2022-08-13 23:51:54.720'),
-         (2, 1, true, '2022-08-20 23:51:54.720'),
-         (3, 1, true, '2022-08-27 23:51:54.720'),
-         (4, 1, false, null),
-         (5, 1, false, null),
-         (6, 1, false, null),
-         (7, 1, false, null),
-         (8, 1, false, null),
-         (9, 1, false, null),
-         (10, 1, false, null),
-         (24, 2, true, '2022-06-23 23:51:54.720'),
-         (25, 2, true, '2022-06-14 23:51:54.720'),
-         (26, 2, false, null),
-         (27, 2, false, null),
-         (28, 2, false, null),
-         (29, 2, false, null),
-         (51, 1, true, '2021-10-13 23:51:54.720'),
-         (52, 2, true, '2021-8-27 23:51:54.720');
+INSERT INTO students_tests (test_id, student_id, done, date_completed, username)
+  VALUES (1, 1, true, '2022-08-13 23:51:54.720', 'admin'),
+         (2, 1, true, '2022-08-20 23:51:54.720', 'admin'),
+         (3, 1, true, '2022-08-27 23:51:54.720', 'admin'),
+         (4, 1, false, null, 'admin'),
+         (5, 1, false, null, 'admin'),
+         (6, 1, false, null, 'admin'),
+         (7, 1, false, null, 'admin'),
+         (8, 1, false, null, 'admin'),
+         (9, 1, false, null, 'admin'),
+         (10, 1, false, null, 'admin'),
+         (24, 2, true, '2022-06-23 23:51:54.720', 'admin'),
+         (25, 2, true, '2022-06-14 23:51:54.720', 'admin'),
+         (26, 2, false, null, 'admin'),
+         (27, 2, false, null, 'admin'),
+         (28, 2, false, null, 'admin'),
+         (29, 2, false, null, 'admin'),
+         (51, 1, true, '2021-10-13 23:51:54.720', 'admin'),
+         (52, 2, true, '2021-8-27 23:51:54.720', 'admin');
 
 INSERT INTO scores (mock, projected, act_english, act_math, act_reading, act_science, sat_verbal, sat_math, cumulative, converted_cumulative, students_tests_id)
   VALUES (false, true, null, null, null, null, 550, 600, 1150, 23, 1),
